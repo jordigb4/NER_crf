@@ -1,0 +1,9 @@
+Tasques:
+    - Canviar feature extraction de la classe del tagger Jordi
+    - Crear el BIOES des del BIO Alberto
+
+    - Avaluació parcial
+    - Avaluació acc BIO
+
+    - Espanyol
+    - Neerlandes
