@@ -1,4 +1,4 @@
-# <span style="font-family:Courier New; color:#CCCCCC">**Named Entity Recognition with CRF**</span>
+# <span style="font-family:Courier New; color:#CCCCCC">**Named Entity Recognition using CRF**</span>
 
 <a name="readme-top"></a>
 
