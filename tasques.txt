@@ -1,9 +1,14 @@
 Tasques:
-    - Canviar feature extraction de la classe del tagger Jordi
-    - Crear el BIOES des del BIO Alberto
+    - Canviar feature extraction de la classe del tagger +classe- Jordi
+    - Crear el BIOES des del BIO +extractor d'entitats- Alberto 
 
-    - Avaluació parcial
-    - Avaluació acc BIO
+    - Avaluació parcial (equilibrar) - Jordi
+    - Avaluació acc - Alberto
 
-    - Espanyol
-    - Neerlandes
+    - Espanyol - Jordi
+    - Neerlandes -Alberto
+
+    
+
+
+
