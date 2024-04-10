@@ -1,4 +1,4 @@
-# Named Entity Recognition with Conditional Random Fields
+# NER with Conditional Random Fields
 
 <a name="readme-top"></a>
 
