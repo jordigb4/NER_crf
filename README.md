@@ -6,7 +6,7 @@ Named Entity Recognition with Conditional Random Fields
 <br />
 <div align="center">
   <a href="https://github.com/albertojc6/Opinion_detection-Supervised-Unsupervised-">
-    <img src="images/NER-Text.png" alt="Logo" width="200" height="130">
+    <img src="images/NER-Text.png" alt="Logo" width="200" height="200">
   </a>
 
 <h3 align="center"></h3>
