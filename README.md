@@ -1,5 +1,5 @@
-# NER_crf
-Named Entity Recognition with Conditional Random Fields
+# Named Entity Recognition with Conditional Random Fields
+
 <a name="readme-top"></a>
 
 <!-- PROJECT LOGO -->
