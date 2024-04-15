@@ -77,18 +77,29 @@ def ne_extractor(sents):
             if word:
                 tok, _, label = word
                 curr_BIO, entity = label[0], label[2:]
-                next_BIO = phrase[i + 1][2] if phrase[i + 1] else None
+                next_BIO = phrase[i + 1][2][0] if phrase[i + 1] else None
 
-                if not next_BIO or curr_BIO == 'O':
-                    if prev_BIO and prev_BIO != 'O':
+                if curr_BIO == 'O':
+                    if (prev_BIO and prev_BIO != 'O'):
                         ne.append(ent_extracted)
+                
                 else:
-
                     #Begin entity
                     if not prev_BIO or prev_BIO == 'O':
                         ent_extracted = (tok, entity)
+    
                     else:
-                        str, entity = ent_extracted
-                        ent_extracted = (str + ' ' + tok, entity)
+                        str, ent = ent_extracted
+                        if entity == ent:
+                            ent_extracted = (str + ' ' + tok, entity)
+                        else:
+                            #different entities together
+                            ne.append(ent_extracted)
+                            ent_extracted = (tok, entity)
+                    
+                    #Also current word is end entity
+                    if not next_BIO:
+                        ne.append(ent_extracted)
+
                 prev_BIO = curr_BIO
     return ne
