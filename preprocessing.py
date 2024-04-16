@@ -63,13 +63,14 @@ def convert_BIO(BIO_sents, begin = True, single = False, end = False):
     return new_sents
                     
 
-def ne_extractor(sents):
+def ne_extractor_txt(sents):
     """
     Extracts the entities of a given IO/BIO/BIOS/BIOES annotated data
     """
     
     ne = list()
     for phrase in sents:
+        phr_ent = list()
         ent_extracted = ('', None)
         phrase.append(None) #Control end-phrase tokens
         prev_BIO = None
@@ -81,7 +82,7 @@ def ne_extractor(sents):
 
                 if curr_BIO == 'O':
                     if (prev_BIO and prev_BIO != 'O'):
-                        ne.append(ent_extracted)
+                        phr_ent.append(ent_extracted)
                 
                 else:
                     #Begin entity
@@ -94,12 +95,13 @@ def ne_extractor(sents):
                             ent_extracted = (str + ' ' + tok, entity)
                         else:
                             #different entities together
-                            ne.append(ent_extracted)
+                            phr_ent.append(ent_extracted)
                             ent_extracted = (tok, entity)
                     
                     #Also current word is end entity
                     if not next_BIO:
-                        ne.append(ent_extracted)
+                        phr_ent.append(ent_extracted)
 
                 prev_BIO = curr_BIO
+        ne.append(phr_ent)
     return ne
