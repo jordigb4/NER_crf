@@ -1,8 +1,9 @@
 import re
 import unicodedata
 import spacy
+
 class Feature_getter:
-    def __init__(self,language = "esp", morphology= True,lenght = True,prefix = True,lemma = True,POS = True,shape = True):
+    def __init__(self,language = "esp",morphology= True,lenght = True,prefix = True,lemma = True,POS = True,shape = True):
         
         # Options initailization
         self.morphology = morphology
@@ -14,6 +15,7 @@ class Feature_getter:
 
         # Features cache
         self.token_cache = {}
+        self.pos_cache = {}
 
         #Model loading
         if language == "esp":
@@ -24,7 +26,14 @@ class Feature_getter:
             raise Exception("Language not in the scope of the model") 
 
 
-    
+    def fit(self,data):
+        # POS tagging caching
+
+        for sentence in data:
+            for element,pos_tag,_ in sentence:
+                if element not in self.pos_cache:
+                    self.pos_cache[element] = pos_tag
+
     def __call__(self, tokens, idx):
         """
         Extract basic features about this word including
@@ -56,10 +65,9 @@ class Feature_getter:
                     "gender": element.morph.get("Gender"),
                     "number": element.morph.get("Number"),
                     "lemma": element.lemma_,
-                    "pos_tag": element.pos_,
                     "shape": element.shape_
                 }
-
+  
         # Morphology
         if self.morphology:
             feature_list.append(str(self.token_cache[token]["gender"]))
@@ -84,7 +92,7 @@ class Feature_getter:
 
         # POS
         if self.POS:
-            feature_list.append("POS_" + self.token_cache[token]["pos_tag"])
+            feature_list.append("POS_" + self.pos_cache[token])
         
         # Shape
         if self.shape:
@@ -113,5 +121,6 @@ class Feature_getter:
             feature_list.append("SUF_" + token[-3:])
 
         feature_list.append("WORD_" + token)
+
         return feature_list
 
