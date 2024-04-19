@@ -16,9 +16,9 @@ def collect_ne(sents):
         prev_BIO = None
         for i, word in enumerate(phrase):
             if word:
-                tok, _, label = word
+                tok, label = word
                 curr_BIO, entity = label[0], label[2:]
-                next_BIO = phrase[i + 1][2][0] if phrase[i + 1] else None
+                next_BIO = phrase[i + 1][1][0] if phrase[i + 1] else None
 
                 if curr_BIO == 'O':
                     if (prev_BIO and prev_BIO != 'O'):
@@ -35,7 +35,7 @@ def collect_ne(sents):
                         else:
                             #different entities together
                             phr_ents.append(ent_extracted)
-                            ent_extracted = (tok, entity)
+                            ent_extracted = Entity(entity, i, i)
                     
                     #Also current word is end entity
                     if not next_BIO:
@@ -46,8 +46,11 @@ def collect_ne(sents):
     return ne
 
 
-def compute_metrics(true_named_entities, pred_named_entities):
+def compute_metrics(true_sents, pred_sents):
 
+    true_named_entities = collect_ne(true_sents)
+    pred_named_entities = collect_ne(pred_sents)
+     
     ents = ['ORG', 'PER', 'LOC', 'MISC']
     eval_metrics = {'correct': 0, 'incorrect': 0, 'partial': 0, 'missed': 0, 'spurious': 0}
 
@@ -109,8 +112,8 @@ def compute_metrics(true_named_entities, pred_named_entities):
                 # Sporious: Entities are over-generated, not in test
                 if not found_overlap:
 
-                    eval_metrics['sporious'] += 1
-                    eval_agg_ent[pred.e_type]['sporious'] += 1
+                    eval_metrics['spurious'] += 1
+                    eval_agg_ent[pred.e_type]['spurious'] += 1
 
         # Missing: Entity was missed entirely in pred.
         for true in true_named_entities[i]:
@@ -124,8 +127,10 @@ def compute_metrics(true_named_entities, pred_named_entities):
     # overall results and at entity level.
 
     eval_metrics = compute_actual_possible(eval_metrics)
+    eval_metrics = compute_precision_recall_F1(eval_metrics)
     for ent in ents:
         eval_agg_ent[ent] = compute_actual_possible(eval_agg_ent[ent])
+        eval_agg_ent[ent] = compute_precision_recall_F1(eval_agg_ent[ent])
 
     return eval_metrics, eval_agg_ent
 

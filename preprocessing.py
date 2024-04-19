@@ -14,7 +14,7 @@ def convert_BIO(BIO_sents, begin = True, single = False, end = False):
         prev_BIO = None
         for i, word in enumerate(phrase):
             if word:
-                tok, tag, label = word
+                tok, _, label = word
                 curr_BIO, entity = label[0], label[1:]
                 next_BIO = phrase[i + 1][2] if phrase[i + 1] else None
 
@@ -57,7 +57,7 @@ def convert_BIO(BIO_sents, begin = True, single = False, end = False):
 
                     #else -> labels are the same
                     
-                new_sent.append((tok, tag, label))
+                new_sent.append((tok, label))
                 prev_BIO = curr_BIO
         new_sents.append(new_sent)
     return new_sents
