@@ -55,11 +55,13 @@ class Feature_getter:
         spacy_token_ant = self.last_doc[idx - 1] if idx - 1 >= 0 else None
         spacy_token_post = self.last_doc[idx + 1] if idx + 1 < len(tokens) else None
 
+
         feature_list = self.get_feature(spacy_token_0, "")
         if self.bigram and spacy_token_ant:
             feature_list.extend(self.get_feature(spacy_token_ant, "-1_"))
             if self.trigram and spacy_token_post:
                 feature_list.extend(self.get_feature(spacy_token_post, "+1_"))
+
         return feature_list
     
     def get_feature(self, spacy_token, position):
