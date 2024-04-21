@@ -43,6 +43,7 @@ def collect_ne(sents):
 
                 prev_BIO = curr_BIO
         ne.append(phr_ents)
+        phrase.pop()
     return ne
 
 
@@ -167,9 +168,9 @@ def compute_precision_recall_F1(results, allow_partial = False):
         precision = correct / actual if actual > 0 else 0
         recall = correct / possible if possible > 0 else 0
 
-    results["precision"] = precision
-    results["recall"] = recall
-    results["F1-score"] = (2 * precision * recall) / (precision + recall)
+    results["precision"] = round(precision, 3)
+    results["recall"] = round(recall, 3)
+    results["F1-score"] = round((2 * precision * recall) / (precision + recall), 3)
 
     return results
 
