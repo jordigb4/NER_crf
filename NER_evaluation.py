@@ -16,7 +16,7 @@ def collect_ne(sents):
         prev_BIO = None
         for i, word in enumerate(phrase):
             if word:
-                tok, label = word
+                _, label = word
                 curr_BIO, entity = label[0], label[2:]
                 next_BIO = phrase[i + 1][1][0] if phrase[i + 1] else None
 
@@ -29,7 +29,7 @@ def collect_ne(sents):
                     if not prev_BIO or prev_BIO == 'O':
                         ent_extracted = Entity(entity, i, i)
     
-                    else:
+                    else:   
                         if entity == ent_extracted.e_type:
                             ent_extracted = ent_extracted._replace(end_offset = ent_extracted.end_offset + 1)
                         else:
@@ -92,13 +92,14 @@ def compute_metrics(true_sents, pred_sents):
                     # check for an overlap i.e. not exact boundary match, with true entities
                     elif find_overlap(true_range, pred_range):
 
+                        true_which_overlapped_with_pred.append(true)
+
                         # Partial: There is an overlap and the entity type is the same
                         if pred.e_type == true.e_type:
 
                             eval_metrics['partial'] += 1
                             eval_agg_ent[pred.e_type]['partial'] += 1
 
-                            true_which_overlapped_with_pred.append(true)
                             found_overlap = True
                             break
                         

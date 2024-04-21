@@ -65,7 +65,7 @@ def convert_BIO(BIO_sents, begin = True, single = False, end = False):
 
 def ne_extractor_txt(sents):
     """
-    Extracts the entities of a given IO/BIO/BIOS/BIOES annotated data
+    Extracts the entities of a given IO/BIO/BIOS/BIOES annotated data as tuples (tok, label)
     """
     
     ne = list()
@@ -76,9 +76,9 @@ def ne_extractor_txt(sents):
         prev_BIO = None
         for i, word in enumerate(phrase):
             if word:
-                tok, _, label = word
+                tok, label = word
                 curr_BIO, entity = label[0], label[2:]
-                next_BIO = phrase[i + 1][2][0] if phrase[i + 1] else None
+                next_BIO = phrase[i + 1][1][0] if phrase[i + 1] else None
 
                 if curr_BIO == 'O':
                     if (prev_BIO and prev_BIO != 'O'):

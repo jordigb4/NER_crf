@@ -5,18 +5,18 @@ import spacy
 class Feature_getter:
 
     def __init__(self, language = "esp", bigram = True, trigram = True, morphology = True, length = True, prefix = True,
-                 sufix = True, lemma = True, POS = True, shape = True):
+                 lemma = True, POS = True, shape = True, gazetteers = False):
         
         # Options initailization
         self.morphology = morphology
         self.length = length
         self.prefix = prefix
-        self.sufix = sufix
         self.lemma = lemma
         self.POS = POS
         self.shape = shape
         self.bigram = bigram
         self.trigram = trigram
+        self.gazetteers = gazetteers
 
         self.last_doc = None #Store the last doc to avoid reprocessing of whole phrase
         self.current_sentence = 0
@@ -25,6 +25,7 @@ class Feature_getter:
             self.nlp = spacy.load("es_core_news_sm")
         elif language == "ned":
             self.nlp = spacy.load("nl_core_news_sm")
+            self.dutch_names = self.get_ned_PER_gazetteer()
         else:
             raise Exception("Language not in the scope of the model") 
 
@@ -54,7 +55,6 @@ class Feature_getter:
         spacy_token_0 = self.last_doc[idx]
         spacy_token_ant = self.last_doc[idx - 1] if idx - 1 >= 0 else None
         spacy_token_post = self.last_doc[idx + 1] if idx + 1 < len(tokens) else None
-
 
         feature_list = self.get_feature(spacy_token_0, "")
         if self.bigram and spacy_token_ant:
@@ -116,14 +116,49 @@ class Feature_getter:
             feature_list.append(position + "PUNCTUATION")
 
         # Suffix up to length 3
-        if self.sufix:
-            if len(token) > 1:
-                feature_list.append(position + "SUF_" + token[-1:])
-            if len(token) > 2:
-                feature_list.append(position + "SUF_" + token[-2:])
-            if len(token) > 3:
-                feature_list.append(position + "SUF_" + token[-3:])
+        if len(token) > 1:
+            feature_list.append(position + "SUF_" + token[-1:])
+        if len(token) > 2:
+            feature_list.append(position + "SUF_" + token[-2:])
+        if len(token) > 3:
+            feature_list.append(position + "SUF_" + token[-3:])
+
+        #Gazetteers
+        if self.gazetteers:
+            if token in self.dutch_names:
+                feature_list.append(position + "IsPERGaz")
 
         feature_list.append(position + "WORD_" + token)
         return feature_list
 
+    def get_ned_PER_gazetteer(self):
+
+        dutch_names = set(['Christiane', 'Vandenbussche', 'Eric', 'Derycke', 'Walter', 'Sybille', 'Luc', 'Waltniel', 'Delcroix', 'Leo', 'Verberckmoes', 'Marc', 'Rudy',
+                            'Willy', 'Norbert', 'De', 'Frans', 'Verwilghen', 'Hilde', 'Marcel', 'Kristian', 'Robert', 'God', 'Cathy', 'Colas', 'Ramotti', 'Karl', 'Laurent', 
+                            'Beatrix', 'Albert', 'KDM', 'Kristof', 'Jan', 'Paul', 'Allen', 'Elián', 'Slobodan', 'Djukanovic', 'Goran', 'Bejoui', 'An', 'Negi', 'Steve', 'Frank', 
+                            'Casagrande', 'Tonkov', 'Garzelli', 'Stefano', 'Gilberto', 'Ivan', 'Buenahora', 'Di', 'Piepoli', 'Gonzales', 'TL', 'Francesco', 'Dario', 'Marco',
+                            'Alvaro', 'Galdeano', 'Tony', 'Simoni', 'Chernow', 'Christo', 'Jeanne-Claude', 'Javacheff', 'Burt', "Christo's", 'Peter-Jan', 'PJB', 'Didier', 'Gosuin',
+                            'Magda', 'Zabel', 'Wüst', 'Plaza', 'Leoni', 'Kadlec', 'Frigo', 'Finot', 'Blanco', 'Ullrich', 'Forconi', 'Merckx', 'Verbrugghe', 'Rebellin', 'Bracke', 
+                            'Hruska', 'Guidi', 'Bruylandts', 'Pantani', 'Fornaciari', 'Casero', 'McRae', 'Koerts', 'Lanfranchi', 'Beikirch', 'Boscardin', 'Rous', 'Van', 'Petersen', 
+                            'Rubiera', 'Pena', 'Savoldelli', 'Hoj', 'Gotti', 'Klöden', 'Gerosa', 'Rittsel', 'Gonzalez', 'Farazijn', 'Usov', 'Baguet', 'Roesems', 'Heppner', 'Liese', 
+                            'Vermeersch', 'Blaudzun', 'Lafis', 'Bölts', 'Kristensen', 'Martinello', 'Belli', 'Boogerd', 'Petacchi', 'Baranowski', 'Castelblanco', 'Noè', 'Konyshev', 
+                            'Braikia', 'Mattan', 'Elli', 'Mancebo', 'Conte', 'Pieri', 'Honchar', 'Svorada', 'Vandenbroucke', 'Ief', 'Dave', 'Kurt', 'Alberto', 'Sara', 'Bruylants', 
+                            'Patrice', 'Marion', 'Marianne', 'Dupont', 'André', 'Vanthilt', 'Jeanine', 'Tom', 'Cahay', 'Georges', 'Sarah', 'Veerle', 'Patricia', 'Kristien', 'Pol', 
+                            'Bart', 'Jeroen', 'Carl', 'MR', 'Ouyahia', 'Seyoum', 'Ahmed', 'Maarten', 'Yemane', 'Theo', 'Cortebeeck', 'Rombouts', 'Eddy', 'Max', 'Ceustermans', 
+                            'Isabelle', 'Gantman', 'Larmuseau', 'Hendrik', 'Jean-Luc', 'Rosenfeld', 'Dehaene', 'Karel', 'Philippe', 'GT', 'Gary', 'Köhler', 'Chuan', 'John', 'Horst',
+                            'Simonet', 'Antoine', 'Jacques', 'James', 'Quaden', 'JVD', 'Guy', 'Tobin', 'Francis', 'Hugo', 'Vermeiren', 'Bob', 'Ruben', 'Schiltz', 'CG', 'Vandamme',
+                            'Leen', 'Michael', 'Phil', 'Best', 'Mike', 'Sabonis', "O'Neal", 'Mark', 'Patrick', 'Bird', 'Reggie', 'Larry', 'Scottie', 'Latrell', 'Kobe', 'Travis',
+                            'Derrick', 'Pippen', 'Jackson', 'Jeff', 'Ratu', 'Baninimarama', 'Speight', 'George', 'Volavola', 'Nailatikau', 'Adi', 'Chaudhry', 'Eroni', 'Mahendra',
+                            'Agassi', 'Els', 'Zvereva', 'Justine', 'Davenport', 'Callens', 'MC', 'Kim', 'Laurence', 'Appelmans', 'Hingis', 'Courtois', 'Casoni', 'Clijsters', 
+                            'Sugiyama', 'Christophe', 'Enqvist', 'Gaudio', 'Kournikova', 'Majoli', 'Hrbaty', 'Rios', 'Kiefer', 'Filip', 'Monami-Van', 'Monami', 'Virginia', 'Marta',
+                            'Dominique', 'Lindsay', 'Marrero', 'Sidot', 'Kremer', 'Grzybowska', 'Coetzer', 'Garcia', 'Pierce', 'Rittner', 'Razzano', 'Dementieva', 'Huber', 'Morariu',
+                            'Martinez', 'Black', 'Carlsson', 'Srebotnik', 'Schett', 'Fusai', 'Williams', 'Tanasugarn', 'Plischke', 'Farina', 'Foretz', 'Zuluaga', 'Mandula', 'Seles',
+                            'Gagliardi', 'Hrdlickova', 'Dokic', 'Kuti', 'Foldenyi', 'Mauresmo', 'Montolio', 'Abe', 'Dragomir', 'Shaughnessy', 'Kucera', 'Pioline', 'Rafter', 'Costa',
+                            'Gumy', 'El', 'Ignacio', 'Portas', 'Balcells', 'Calleri', 'Medvedev', 'Rosset', 'Grosjean', 'Browne', 'Safin', 'Ilie', 'Chang', 'Johansson', 'Kafelnikov',
+                            'Zabaleta', 'Ferrero', 'Dosedel', 'Philippoussis', 'Goldstein', 'Arazi', 'Hipfl', 'Lapentti', 'Ulihrach', 'Federer', 'Gambill', 'Ferreira', 'Coria', 
+                            'Henman', 'Vinck', 'Kuerten', 'Charpentier', 'Kratochvil', 'Stanoytchev', 'Vicente', 'Agenor', 'Puerta', 'Clavet', 'Krajicek', 'Eschauer', 'Corretja',
+                            'Meligeni', 'Sargsian', 'Schalken', 'Hantschk', 'Prinosil', 'Moya', 'Hewitt', 'Tarango', 'Bruguera', 'Lisnard', 'Squillari', 'Popp', 'Santoro', 
+                            'Gustafsson', 'Dupuis', 'Tillstrom', 'Gaudenzi', 'Lottum', 'Savolt', 'Rodriguez', 'Serrano', 'Pavel', 'Stoltenberg', 'Novak', 'Clement', 'Escude', 'Raoux',
+                            'Bastl', 'Sanguinetti', 'Chela', 'Martin', 'Vanek', 'Berasategui', 'Massu', 'Diaz', 'Haas', 'C.', 'Ivanisevic', 'Hry', 'Bjorkman', 'Pozzi', 'Norman'])
+
+        return dutch_names
