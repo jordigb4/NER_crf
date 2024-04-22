@@ -49,7 +49,7 @@ class Feature_getter:
             return list()
         if idx == 0:
             self.current_sentence += 1
-            print(f'Processing sentence {self.current_sentence}...',end='\r')
+            #print(f'Processing sentence {self.current_sentence}...',end='\r')
             self.last_doc = list(self.nlp(' '.join(tokens)))
 
         spacy_token_0 = self.last_doc[idx]
