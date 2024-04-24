@@ -1,4 +1,4 @@
-
+import re
 def convert_BIO(BIO_sents, begin = True, single = False, end = False):
     """
     Conversion of annotated BIO sentences to IO/BIOS/BIOES
@@ -56,8 +56,15 @@ def convert_BIO(BIO_sents, begin = True, single = False, end = False):
                             label = 'S' + entity
 
                     #else -> labels are the same
-                    
+                pattern = r'\b\w+[.,!?]$'
+                new_token = False
+                if re.match(pattern, tok):
+                    punct = tok[-1] 
+                    tok = tok[:-1]
+                    new_token = True
+
                 new_sent.append((tok, label))
+                if new_token: new_sent.append((punct, 'O')) 
                 prev_BIO = curr_BIO
         new_sents.append(new_sent)
     return new_sents
