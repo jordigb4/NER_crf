@@ -17,6 +17,7 @@ class Feature_getter:
         self.prev_tok = prev_tok
         self.next_tok = next_tok
         self.gazetteers = gazetteers
+        self.language = language
 
         self.last_doc = None #Store the last doc to avoid reprocessing of whole phrase
         self.current_sentence = 0
@@ -66,24 +67,24 @@ class Feature_getter:
         return feature_list
     
 
-    def get_feature(self, spacy_token, position):
+    
+    def get_feature(self, token, spacy_token, position):
 
-        token = str(spacy_token)
         feature_list = list()
-
+        correct = (token == spacy_token.text)
         # Morphology
-        if self.morphology:
+        if self.morphology and correct:
             for gender in spacy_token.morph.get("Gender"):
                 feature_list.append(position + "gender_" + gender)
             for number in spacy_token.morph.get("Number"):
                 feature_list.append(position + "number_" + number)
 
         # Length
-        if self.length:
+        if self.length and correct:
             feature_list.append(position + "LEN_" + str(len(token)))
 
         # Prefix
-        if self.prefix:
+        if self.prefix  and correct:
             if len(token) > 0:
                 feature_list.append(position + "PRE_" + token[:1])
             if len(token) > 1:
@@ -92,15 +93,15 @@ class Feature_getter:
                 feature_list.append(position + "PRE_" + token[:3])
         
         # Lemma
-        if self.lemma:
+        if self.lemma  and correct:
             feature_list.append(position + "LEMMA_" + spacy_token.lemma_)
 
         # POS
-        if self.POS:
+        if self.POS and correct:
             feature_list.append(position + "POS_" + spacy_token.pos_)
         
         # Shape
-        if self.shape:
+        if self.shape and correct:
             feature_list.append(position + "SHAPE_" + spacy_token.shape_)
         
         # Capitalization
