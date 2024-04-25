@@ -5,7 +5,7 @@ import spacy
 class Feature_getter:
 
     def __init__(self, language = "esp", prev_tok = True, next_tok = True, morphology = True, length = True, prefix = True,
-                 lemma = True, POS = True, shape = True, gazetteers = False):
+                 lemma = True, POS = True, shape = True):
         
         # Options initailization
         self.morphology = morphology
@@ -16,7 +16,6 @@ class Feature_getter:
         self.shape = shape
         self.prev_tok = prev_tok
         self.next_tok = next_tok
-        self.gazetteers = gazetteers
         self.language = language
 
         self.last_doc = None #Store the last doc to avoid reprocessing of whole phrase
@@ -54,15 +53,15 @@ class Feature_getter:
             self.last_doc = list(self.nlp(' '.join(tokens)))
 
         spacy_token_0 = self.last_doc[idx]
-        feature_list = self.get_feature(spacy_token_0, "")
+        feature_list = self.get_feature(token, spacy_token_0, "")
         if self.prev_tok:
             if idx - 1 >= 0:
                 spacy_token_prev = self.last_doc[idx - 1]
-                feature_list.extend(self.get_feature(spacy_token_prev, "-1_"))
+                feature_list.extend(self.get_feature(tokens[idx-1], spacy_token_prev, "-1_"))
             if self.next_tok:
                 if idx + 1 < len(tokens):
                     spacy_token_next = self.last_doc[idx + 1]
-                    feature_list.extend(self.get_feature(spacy_token_next, "+1_"))
+                    feature_list.extend(self.get_feature(tokens[idx+1], spacy_token_next, "+1_"))
 
         return feature_list
     
@@ -72,38 +71,39 @@ class Feature_getter:
 
         feature_list = list()
         correct = (token == spacy_token.text)
-        # Morphology
-        if self.morphology and correct:
-            for gender in spacy_token.morph.get("Gender"):
-                feature_list.append(position + "gender_" + gender)
-            for number in spacy_token.morph.get("Number"):
-                feature_list.append(position + "number_" + number)
+        if correct:
+            # Morphology
+            if self.morphology:
+                for gender in spacy_token.morph.get("Gender"):
+                    feature_list.append(position + "gender_" + gender)
+                for number in spacy_token.morph.get("Number"):
+                    feature_list.append(position + "number_" + number)
 
-        # Length
-        if self.length and correct:
-            feature_list.append(position + "LEN_" + str(len(token)))
+            # Length
+            if self.length:
+                feature_list.append(position + "LEN_" + str(len(token)))
 
-        # Prefix
-        if self.prefix  and correct:
-            if len(token) > 0:
-                feature_list.append(position + "PRE_" + token[:1])
-            if len(token) > 1:
-                feature_list.append(position + "PRE_" + token[:2])
-            if len(token) > 2:
-                feature_list.append(position + "PRE_" + token[:3])
-        
-        # Lemma
-        if self.lemma  and correct:
-            feature_list.append(position + "LEMMA_" + spacy_token.lemma_)
+            # Prefix
+            if self.prefix:
+                if len(token) > 0:
+                    feature_list.append(position + "PRE_" + token[:1])
+                if len(token) > 1:
+                    feature_list.append(position + "PRE_" + token[:2])
+                if len(token) > 2:
+                    feature_list.append(position + "PRE_" + token[:3])
+            
+            # Lemma
+            if self.lemma:
+                feature_list.append(position + "LEMMA_" + spacy_token.lemma_)
 
-        # POS
-        if self.POS and correct:
-            feature_list.append(position + "POS_" + spacy_token.pos_)
-        
-        # Shape
-        if self.shape and correct:
-            feature_list.append(position + "SHAPE_" + spacy_token.shape_)
-        
+            # POS
+            if self.POS:
+                feature_list.append(position + "POS_" + spacy_token.pos_)
+            
+            # Shape
+            if self.shape:
+                feature_list.append(position + "SHAPE_" + spacy_token.shape_)
+            
         # Capitalization
         if token[0].isupper():
             feature_list.append(position + "CAPITALIZATION")
