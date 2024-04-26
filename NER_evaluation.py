@@ -172,7 +172,7 @@ def compute_actual_possible(results):
 
     return results
 
-def compute_precision_recall_F1(results, allow_partial = False):
+def compute_precision_recall_F1(results, allow_partial = True):
     """
     Takes a result dict that has been output by compute actual possible.
     Returns the results dict with precison, recall and F1-score populated.
