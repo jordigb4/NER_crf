@@ -1,8 +1,10 @@
 from collections import namedtuple
 from copy import deepcopy
-from sklearn.metrics import classification_report
+from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.preprocessing import LabelBinarizer
 from itertools import chain
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 def bio_classification_report(y_true, y_pred):
     
@@ -201,3 +203,33 @@ def find_overlap(true_range, pred_range):
     pred_set = set(pred_range)
 
     return true_set.intersection(pred_set)
+
+def get_entity(label: str):
+    if label != 'O':
+        return label.split("-")[1]
+    else:
+        return label
+
+def create_target_vector(X):
+    target_vector = []
+    for sent in X:
+        for tok in sent:
+            target_vector.append(get_entity(tok))
+    return target_vector
+
+def ent_confusion_matrix(y_true, y_pred):
+    """
+    Generates a confusion matrix from the output y, that is a list of lists with (BIO)-entity
+    """
+
+    y_true = create_target_vector(y_true)
+    y_pred = create_target_vector(y_pred)
+    classes = sorted(set(y_true))
+
+    cm = confusion_matrix(y_true, y_pred, labels=classes, normalize='true')
+    plt.figure(figsize=(7, 5))
+    sns.heatmap(data=cm, annot=True, fmt=".2f", cmap='Blues', xticklabels=classes, yticklabels=classes)
+    plt.xlabel('Predicted labels')
+    plt.ylabel('True labels')
+    plt.title('Confusion Matrix')
+    plt.show()
