@@ -68,12 +68,12 @@ def collect_ne(sents):
     return ne
 
 
-def compute_metrics(true_sents, pred_sents):
+def compute_metrics(true_sents, pred_sents,mode = "conll"):
 
     true_named_entities = collect_ne(true_sents)
     pred_named_entities = collect_ne(pred_sents)
-     
-    ents = ['ORG', 'PER', 'LOC', 'MISC']
+    
+    ents = ['ORG', 'PER', 'LOC', 'MISC'] if mode == "conll" else ['ADR','Di','Dr','S','F']
     eval_metrics = {'correct': 0, 'incorrect': 0, 'partial': 0, 'missed': 0, 'spurious': 0}
 
     # results by entity type
