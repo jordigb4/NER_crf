@@ -70,7 +70,7 @@ def collect_ne(sents):
     return ne
 
 
-def compute_metrics(true_sents, pred_sents,mode = "conll"):
+def compute_metrics(true_sents, pred_sents, mode = "conll"):
 
     true_named_entities = collect_ne(true_sents)
     pred_named_entities = collect_ne(pred_sents)
