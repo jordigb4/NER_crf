@@ -63,22 +63,6 @@ To get a local copy up and running follow these simple example steps.
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
-<!-- USAGE EXAMPLES -->
-## Usage
-
-```python
-from hybrid_classifier import HybridClassifier
-
-# Train classifier
-classifier = HybridClassifier()
-
-#Predict
-pred = classifier.predict(X_test)
-print(pred)
-```
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 ## Repository Structures
 
     ª   CADEC_crf.ipynb                   # Cadec dataset NER
