@@ -36,9 +36,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-This is a project to program a classifier of the polarity of subjective texts. In a first part, we implement a supervised ML method, using as data the Movie Reviews Corpus of NLTK, made up of 1000 examples of positive opinions and 1000 negative opinions. However, in order to compare the results, we will also want to adopt an unsupervised view, using the polarity scores that SentiWordNet provides.  
-
-Among the objectives, the introduction of concepts and tools of Natural Language Processing stands out, as well as the analysis of which data preprocessing is most appropriate to the task of distinguishing its polarity. In addition, understanding the importance of disambiguation of senses, since relating the syntactic and semantic content of a sentence will lead models to better results.
+In this project, we employ Conditional Random Fields (CRF), a stochastic discriminative model commonly used for labeling data, to perform named entity recognition. We utilize a CRF model for each language to compare their performance and analyze the preprocessing steps tailored to each dataset.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -60,7 +58,7 @@ To get a local copy up and running follow these simple example steps.
 
 1. Clone the repo
   ```sh
-  git clone https://github.com/jordigb4/Opinion_detection-Supervised-Unsupervised-.git
+  git clone https://github.com/jordigb4/NER_crf
   ```
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -83,17 +81,23 @@ print(pred)
 
 ## Repository Structures
 
-    .
-    ├── models                                  # Trained models
-    ├── images                                  # Resulting Confusion Matrices
-    ├── contractions.py                         # Dict with english contractions expansion
-    ├── text_normalizer.py                      # Text preprocessing function
-    ├── textserver.py                           # Word Sense Desambiguation Module
-    ├── hybrid_classifier.py                    # Class with hybrid classifier 
-    ├── OpinionDetection-Supervised.ipynb       # Work on supervised classifiers
-    ├── OpinionDetection-Unsupervised.ipynb     # Work on SentiWordnet-based model
-    ├── OpinionDetection-Hybrid.ipynb           # Mix Supervised-Unsupervised
-    └── README.md
+    ª   CADEC_crf.ipynb                   # Cadec dataset NER
+    ª   feature_getter.py                 # Class with feature getter
+    ª   hyper&feature_opt-esp.ipynb       # Hiperparameter and feature selection spanish dataset
+    ª   hyper&feature_opt-ned.ipynb       # Hiperparameter and feature selection dutch dataset
+    ª   NER_evaluation.py                 # Evaluation functions and metrics
+    ª   preprocessing.py                  # Preprocessing and tag converting functions
+    ª   README.md
+    ª   test.ipynb                        # Results and conclusion with final models
+    
+    +---data                              # Labeled CADEC datasets
+        ª       test.conll                
+        ª       train.conll     
+    +---images                            
+        ª       esp_confusion_matrix.png
+        ª       ned_confusion_matrix.png
+        ª       NER-Text.png    
+        
 
 <p align="right">(<a href="#repo-structures">back to top</a>)</p>
 
